@@ -1,6 +1,7 @@
 package com.authproyect.app.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class Usuario {
     @Id
     @Column(length = 100, nullable = false)
+    @Email
     private String email;
 
     @Column(nullable = false)
@@ -23,5 +25,5 @@ public class Usuario {
     @ManyToOne
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
-    
+
 }
