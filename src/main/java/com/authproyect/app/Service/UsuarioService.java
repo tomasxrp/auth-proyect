@@ -5,13 +5,17 @@ import com.authproyect.app.Entity.Usuario;
 import com.authproyect.app.Repository.RolRepository;
 import com.authproyect.app.Repository.UsuarioRepository;
 import com.authproyect.app.Utils.HasherContrasena;
+import com.authproyect.app.Utils.VerificadorContrasena;
 import com.authproyect.app.dto.MapperDto;
 import com.authproyect.app.dto.Response.UsuarioResponseDto;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.AuthenticationException;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -40,4 +44,22 @@ public class UsuarioService {
 
         return MapperDto.toDto(usuarioGuardado);
     }
+
+    @Transactional(readOnly = true)
+    //Despues deberia retornar un token JWT
+    public boolean login(String email, String contrasena) {
+        Optional<Usuario> usuarioEncontrado = usuarioRepository.findByEmail(email);
+
+        if (usuarioEncontrado.isEmpty()){
+            throw new AuthenticationCredentialsNotFoundException("Usuario o contraseña incorrectas");
+        }
+
+        if (!VerificadorContrasena.validarContrasena(contrasena, usuarioEncontrado.get().getContrasena())) {
+            throw new AuthenticationCredentialsNotFoundException("Usuario o contraseña incorrectas");
+        }
+
+
+        return true;
+    }
+
 }
