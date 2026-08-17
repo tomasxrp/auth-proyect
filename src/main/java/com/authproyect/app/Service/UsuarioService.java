@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.AuthenticationException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -21,24 +20,25 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UsuarioService {
 
+    private final TokenService tokenService;
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
 
     @Transactional
     public UsuarioResponseDto crearUsuario(String email, String contrasena, String rol) {
-        //Se verifica si el usuario existe en la base de datos
+        // Se verifica si el usuario existe en la base de datos
         if (usuarioRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("El email se encuentra registrado en la base de datos");
         }
 
-        //Se verifica que el rol exista en la base de datos
+        // Se verifica que el rol exista en la base de datos
         Rol rolEncontrado = rolRepository.findByNombre(rol)
                 .orElseThrow(() -> new NoSuchElementException("El rol no existe en la base de datos"));
 
-        //Se encripta la contrasena que sera guardada en la base de datos
+        // Se encripta la contrasena que sera guardada en la base de datos
         String contrasenaHash = HasherContrasena.encriptarContrasena(contrasena);
 
-        //Guardar usuario en bd
+        // Guardar usuario en bd
         Usuario usuarioGuardado = new Usuario(email, contrasenaHash, rolEncontrado);
         usuarioRepository.save(usuarioGuardado);
 
@@ -46,11 +46,11 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    //Despues deberia retornar un token JWT
-    public boolean login(String email, String contrasena) {
+    // Despues deberia retornar un token JWT
+    public String login(String email, String contrasena) {
         Optional<Usuario> usuarioEncontrado = usuarioRepository.findByEmail(email);
 
-        if (usuarioEncontrado.isEmpty()){
+        if (usuarioEncontrado.isEmpty()) {
             throw new AuthenticationCredentialsNotFoundException("Usuario o contraseña incorrectas");
         }
 
@@ -58,8 +58,7 @@ public class UsuarioService {
             throw new AuthenticationCredentialsNotFoundException("Usuario o contraseña incorrectas");
         }
 
-
-        return true;
+        return tokenService.generarToken(email);
     }
 
 }
