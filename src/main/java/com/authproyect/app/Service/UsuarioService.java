@@ -9,6 +9,7 @@ import com.authproyect.app.Utils.VerificadorContrasena;
 import com.authproyect.app.dto.MapperDto;
 import com.authproyect.app.dto.Response.UsuarioResponseDto;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class UsuarioService {
     private final TokenService tokenService;
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final EmailService emailService;
 
     @Transactional
     public UsuarioResponseDto crearUsuario(String email, String contrasena, String rol) {
@@ -41,6 +43,8 @@ public class UsuarioService {
         // Guardar usuario en bd
         Usuario usuarioGuardado = new Usuario(email, contrasenaHash, rolEncontrado);
         usuarioRepository.save(usuarioGuardado);
+
+        emailService.enviarCorreoBienvenida(email);
 
         return MapperDto.toDto(usuarioGuardado);
     }
