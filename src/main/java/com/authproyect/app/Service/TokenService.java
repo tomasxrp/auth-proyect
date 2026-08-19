@@ -28,6 +28,10 @@ public class TokenService {
         return obtenerClaims(token).getSubject();
     }
 
+    public String extraerRol(String token){
+        return obtenerClaims(token).get("rol", String.class);
+    }
+
     private Claims obtenerClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSecretKey())
@@ -46,24 +50,24 @@ public class TokenService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generarToken(String email) {
+    public String generarToken(String email, String rol) {
         Date ahora = new Date();
         Date fechaExpiracion = new Date(ahora.getTime() + expiration);
 
         return Jwts.builder()
                 .subject(email)
+                .claim("rol", rol)
                 .issuedAt(ahora)
                 .expiration(fechaExpiracion)
                 .signWith(getSecretKey())
                 .compact();
     }
 
-    public boolean validarToken(String token, String email) {
+    public boolean validarToken(String token) {
         try {
-            String emailExtraido = extraerEmail(token);
-            boolean expirado = obtenerClaims(token).getExpiration().before(new Date());
+            Claims claims = obtenerClaims(token);
 
-            return emailExtraido.equals(email) && !expirado;
+            return !claims.getExpiration().before(new Date());
         } catch (Exception e) {
             return false;
         }

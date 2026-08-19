@@ -58,7 +58,15 @@ public class UsuarioService {
             throw new AuthenticationCredentialsNotFoundException("Usuario o contraseña incorrectas");
         }
 
-        return tokenService.generarToken(email);
+        return tokenService.generarToken(email,usuarioEncontrado.get().getRol().getNombre());
     }
 
+    public Boolean validarToken(String token) throws Exception {
+        boolean esValido = tokenService.validarToken(token);
+        if (!esValido){
+            throw new Exception("El token no es valido");
+        }
+
+        return true;
+    }
 }
