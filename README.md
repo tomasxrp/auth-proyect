@@ -22,6 +22,7 @@ Esta aplicacion que brinda servicios de autenticacion y autorizacion construidos
 
 ## Tecnologías Utilizadas
 
+### Desarrollo Propio
 *   **Lenguaje:** Java 21
 *   **Framework:** Spring Boot 
 *   **Seguridad:** Spring Security & JWT (JSON Web Tokens)
@@ -29,6 +30,9 @@ Esta aplicacion que brinda servicios de autenticacion y autorizacion construidos
 *   **Persistencia:** Spring Data JPA / Hibernate
 *   **Base de Datos:** H2 Database (Desarrollo)
 *   **Notificaciones:** Mailpit (Servidor local)
+
+### Desarrollo por IA
+*   **Frontend:** El frontend completo fue hecho con IA solo para consumir de manera mas fácil el servicio. Las tecnologias usadas fueron HTML, CSS y JS
 
 ## Cacterísticas Principales
 
