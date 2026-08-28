@@ -45,3 +45,28 @@ Esta aplicacion que brinda servicios de autenticacion y autorizacion construidos
 | `POST` | `/api/auth/registro` | Registra un nuevo usuario y envía correo de bienvenida. | No |
 | `POST` | `/api/auth/login` | Autentica un usuario y devuelve un JWT firmado. | No |
 | `GET` | `/api/auth/validar` | Verifica si el token enviado en el Header es válido. | Sí (Bearer Token) |
+
+## Instrucciones de uso
+### REQUISITOS
+* GIT(para clonar el repo)
+* Docker desktop (Para ejecutar la base de datos y el servidor mailpit en un contenedor)
+* JAVA 21 JDK(PAra correr el backend)
+
+### Pasos para usarlo
+1. Clonar el repositorio y entrar a la carpeta
+```
+git clone <URL_DE_TU_REPOSITORIO>
+cd auth-proyect
+```
+
+2. Levantar el contenedor docker
+```
+docker compose up -d
+```
+3. Ejecutar la aplicacion del backend
+
+#### Puertos
+* Servidor mailpit: http://localhost:8025
+* Servidor backend: http://localhost:9090
+   
+
