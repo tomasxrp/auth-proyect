@@ -19,13 +19,7 @@ Esta aplicacion que brinda servicios de autenticacion y autorizacion construidos
 
 ## Linter y Formatter
 *   **Estándar:** [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html). Con esto aseguro reglas estrictas de indentación, importaciones y obliga el uso de `camelCase` y `PascalCase`.
-*   **Herramienta:** El proyecto integra el plugin **Spotless** (vía Maven).
 
-## Pruebas Automatizadas (Testing)
-
-*   **Frameworks:** Se utiliza **JUnit 5** para la creación de pruebas unitarias y de integración, junto con **Mockito** para simular las interacciones con la base de datos y servicios externos (como el envío de correos).
-*   **Cobertura Esperada:** Toda nueva funcionalidad (features) o corrección de bugs (fixes) debe ir acompañada de sus respectivas pruebas unitarias. Se apunta a mantener una cobertura de código (Code Coverage) mínima del **70%** en la capa de Servicios (`@Service`).
-*   
 ## Tecnologías Utilizadas
 
 *   **Lenguaje:** Java 21
@@ -34,7 +28,7 @@ Esta aplicacion que brinda servicios de autenticacion y autorizacion construidos
 *   **Encriptación:** BCryptPasswordEncoder
 *   **Persistencia:** Spring Data JPA / Hibernate
 *   **Base de Datos:** H2 Database (Desarrollo)
-*   **Notificaciones:** JavaMailSender (Integración SMTP)
+*   **Notificaciones:** Mailpit (Servidor local)
 
 ## Cacterísticas Principales
 
