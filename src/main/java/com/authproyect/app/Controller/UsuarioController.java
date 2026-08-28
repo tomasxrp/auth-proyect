@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
@@ -29,13 +31,19 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto dto){
-        boolean loginExitoso = usuarioService.login(dto.getEmail(), dto.getContrasena());
-        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body("LOGIN EXITOSO");
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequestDto dto) {
+        String token = usuarioService.login(dto.getEmail(), dto.getContrasena());
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(Map.of("token", token));
     }
 
+    @GetMapping("/validar")
+    public ResponseEntity<Map<String, Object>> validarToken(Authentication authentication){
+        return ResponseEntity.ok(Map.of("valido", true,
+                                        "email", authentication.getName(),
+                                        "autoridades", authentication.getAuthorities()));
+    }
 
-    //Captura de excepciones de el service
+    // Captura de excepciones de el service
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleEmailDuplicado(IllegalArgumentException exception) {
         return ResponseEntity.status(HttpStatusCode.valueOf(409))
@@ -48,14 +56,18 @@ public class UsuarioController {
                 .body(Map.of("error", exception.getMessage()));
     }
 
-
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCredencialesNoValidas(AuthenticationCredentialsNotFoundException exception){
+    public ResponseEntity<Map<String, String>> handleCredencialesNoValidas(
+            AuthenticationCredentialsNotFoundException exception) {
         return ResponseEntity.status(HttpStatusCode.valueOf(401))
                 .body(Map.of("error", exception.getMessage()));
     }
 
-
-
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleFormatoInvalido(MethodArgumentNotValidException exception) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(
+                Map.of("Error", exception.getMessage())
+        );
+    }
 
 }

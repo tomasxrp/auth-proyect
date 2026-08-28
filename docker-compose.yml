@@ -10,9 +10,18 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: auth_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  #Servicio para simular el servicio de correo
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: docker_mailpit
+    restart: always
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
 volumes:
   postgres_data:
