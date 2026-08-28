@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | AuthProyect</title>
+  <meta name="description" content="Dashboard exclusivo para administradores con herramientas de inspección de JWT y validación de endpoints.">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Minimalist Background Grid & Ambient -->
+  <div class="bg-ambient"></div>
+  <div class="bg-grid"></div>
+
+  <div class="dashboard-layout">
+    
+    <!-- Top Navigation -->
+    <header class="dash-header">
+      <div class="dash-nav">
+        
+        <a href="admin-dashboard.html" class="nav-brand">
+          <div class="nav-brand-icon" style="background: var(--gradient-admin);">
+            <span>⚡</span>
+          </div>
+          <div class="nav-brand-title">
+            Auth<span class="text-gradient-admin">Proyect</span> <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-left: 4px;">ADMIN</span>
+          </div>
+        </a>
+
+        <div class="nav-actions">
+          <div class="user-profile-badge">
+            <div class="user-avatar" style="background: var(--gradient-admin);" id="user-avatar-initial">A</div>
+            <div class="user-info-text">
+              <span class="user-email-display user-email-text">admin@example.com</span>
+              <span class="badge badge-admin user-role-text" style="font-size: 0.68rem; padding: 1px 6px;">ADMINISTRADOR</span>
+            </div>
+          </div>
+
+          <button id="btn-logout" class="btn btn-secondary btn-sm" title="Cerrar sesión segura">
+            <span>🚪</span> Cerrar Sesión
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dash-main">
+      
+      <!-- Welcome Banner -->
+      <section class="glass-panel welcome-banner admin-banner">
+        <div class="welcome-text">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <span class="badge badge-admin">Acceso de Administrador</span>
+            <span class="badge badge-live"><span class="status-dot"></span> Sesión Activa</span>
+          </div>
+          <h1>Panel de Control de <span class="text-gradient-admin">Administración</span></h1>
+          <p>Bienvenido, <strong class="user-email-text text-mono" style="color: #ffffff;">admin@example.com</strong>. Tienes permisos elevados para auditar sesiones y probar endpoints.</p>
+        </div>
+      </section>
+
+      <!-- Stat Cards Grid -->
+      <section class="dash-grid">
+        
+        <div class="col-4">
+          <div class="glass-panel stat-card">
+            <div class="stat-icon amber">🛡️</div>
+            <div class="stat-info">
+              <span class="stat-label">Nivel de Rol</span>
+              <span class="stat-value user-role-text text-gradient-admin">ADMINISTRADOR</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="glass-panel stat-card">
+            <div class="stat-icon indigo">⏳</div>
+            <div class="stat-info">
+              <span class="stat-label">Tiempo Restante de Token</span>
+              <span class="stat-value text-mono" id="session-expires-text">Calculando...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="glass-panel stat-card">
+            <div class="stat-icon cyan">🚀</div>
+            <div class="stat-info">
+              <span class="stat-label">Backend Spring Boot</span>
+              <span class="stat-value" style="font-size: 1.15rem; color: #22d3ee;">Puerto 9090 OK</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Main Columns -->
+      <div class="dash-grid">
+        
+        <!-- Left Column: JWT Inspector & API Tester -->
+        <div class="col-8">
+          
+          <!-- JWT Inspector Card -->
+          <div class="glass-panel dash-card" style="margin-bottom: 1.5rem;">
+            <div class="dash-card-header">
+              <div class="dash-card-title">
+                <span>🔍</span> Inspector de Token JWT
+              </div>
+              <span class="badge badge-live">Claims Extraídos</span>
+            </div>
+
+            <!-- Session Countdown Bar -->
+            <div class="session-timer-box">
+              <div class="session-timer-header">
+                <span style="color: var(--text-muted);">Validez de la sesión JWT</span>
+                <span class="text-mono" style="font-weight: 600; color: #818cf8;">Stateless Bearer</span>
+              </div>
+              <div class="session-progress-bar">
+                <div class="session-progress-fill" id="session-progress-fill"></div>
+              </div>
+            </div>
+
+            <!-- Properties Grid -->
+            <div class="token-property-grid">
+              <div class="property-box">
+                <span class="label">Subject (Email del Usuario)</span>
+                <span class="value text-mono" id="jwt-claim-sub">-</span>
+              </div>
+              <div class="property-box">
+                <span class="label">Claim "rol"</span>
+                <span class="value text-mono" id="jwt-claim-rol" style="color: #fbbf24;">-</span>
+              </div>
+              <div class="property-box">
+                <span class="label">Issued At (iat)</span>
+                <span class="value text-mono" id="jwt-claim-iat">-</span>
+              </div>
+              <div class="property-box">
+                <span class="label">Expiration (exp)</span>
+                <span class="value text-mono" id="jwt-claim-exp">-</span>
+              </div>
+            </div>
+
+            <!-- Raw Token Box -->
+            <div style="margin-top: 0.5rem;">
+              <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">
+                Token JWT Completo (Header + Payload + Signature)
+              </span>
+              <div class="code-block-wrapper">
+                <button type="button" class="copy-btn" id="btn-copy-token">📋 Copiar Token</button>
+                <div class="code-block" id="raw-jwt-token">Cargando token...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- API Sandbox: Validate Endpoint -->
+          <div class="glass-panel dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">
+                <span>⚡</span> Probador del Endpoint Protegido: <code>GET /api/usuarios/validar</code>
+              </div>
+              <button id="btn-test-validate" class="btn btn-primary btn-sm">
+                ⚡ Probar /api/usuarios/validar
+              </button>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.85rem;">
+              Envía una solicitud HTTP con la cabecera <code>Authorization: Bearer &lt;token&gt;</code> hacia el controlador de Spring Boot para verificar que el filtro <code>JwtAuthenticationFilter</code> valide el token y cargue las autoridades en el <code>SecurityContext</code>.
+            </p>
+
+            <div class="api-tester-response">
+              <div class="api-tester-header">
+                <div>
+                  <span style="color: var(--text-muted); font-size: 0.75rem;">RESPUESTA DEL SERVIDOR:</span>
+                  <span id="api-test-status" class="status-tag ok" style="margin-left: 0.5rem;">200 OK</span>
+                </div>
+                <span id="api-test-time" class="text-mono" style="font-size: 0.75rem; color: var(--text-muted);">-- ms</span>
+              </div>
+              <pre class="code-block json" id="api-test-response">{ "cargando": true }</pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Quick Actions & Security Audit -->
+        <div class="col-4">
+          
+          <!-- Quick User Registration Sandbox -->
+          <div class="glass-panel dash-card" style="margin-bottom: 1.5rem;">
+            <div class="dash-card-header">
+              <div class="dash-card-title">
+                <span>➕</span> Registro Rápido
+              </div>
+            </div>
+            
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1rem;">
+              Crea nuevos usuarios directamente desde el panel de administrador:
+            </p>
+
+            <form id="admin-quick-reg-form" novalidate>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.78rem;">Email</label>
+                <input type="email" id="quick-email" class="form-control no-icon" placeholder="nuevo@empresa.com" required style="padding: 0.6rem 0.85rem; font-size: 0.85rem;">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.78rem;">Contraseña (mín 8 car.)</label>
+                <input type="password" id="quick-pass" class="form-control no-icon" placeholder="Contraseña123" required style="padding: 0.6rem 0.85rem; font-size: 0.85rem;">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.78rem;">Rol</label>
+                <select id="quick-rol" class="form-control no-icon" style="padding: 0.6rem 0.85rem; font-size: 0.85rem;">
+                  <option value="USER">USER (Estándar)</option>
+                  <option value="ADMINISTRADOR">ADMINISTRADOR (Admin)</option>
+                </select>
+              </div>
+              <button type="submit" id="btn-quick-reg" class="btn btn-secondary btn-block btn-sm">
+                Crear Usuario vía API
+              </button>
+            </form>
+          </div>
+
+          <!-- Security Status Details -->
+          <div class="glass-panel dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">
+                <span>🛡️</span> Configuración de Seguridad
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <div class="check-icon">✓</div>
+              <div>
+                <strong style="font-size: 0.85rem; color: var(--text-primary);">Filtro JWT Activo</strong>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Intercepta todas las rutas protegidas vía OncePerRequestFilter.</p>
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <div class="check-icon">✓</div>
+              <div>
+                <strong style="font-size: 0.85rem; color: var(--text-primary);">BCrypt Hashing</strong>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Contraseñas hasheadas en base de datos.</p>
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <div class="check-icon">✓</div>
+              <div>
+                <strong style="font-size: 0.85rem; color: var(--text-primary);">CORS Habilitado</strong>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Peticiones cruzadas permitidas para el frontend.</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    // Handler para formulario de registro rápido en admin dashboard
+    document.getElementById('admin-quick-reg-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('quick-email').value.trim();
+      const pass = document.getElementById('quick-pass').value;
+      const rol = document.getElementById('quick-rol').value;
+      const btn = document.getElementById('btn-quick-reg');
+
+      if (!email || !pass) {
+        Toast.warning('Completa todos los campos del usuario.', 'Campos requeridos');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="btn-spinner"></span> Creando...';
+
+      try {
+        await api.register(email, pass, rol);
+        Toast.success(`Usuario [${email}] con rol [${rol}] creado con éxito.`, 'Usuario Creado');
+        document.getElementById('admin-quick-reg-form').reset();
+      } catch (err) {
+        Toast.error(err.message || 'Error al crear usuario.', 'Error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Crear Usuario vía API';
+      }
+    });
+  </script>
+</body>
+</html>

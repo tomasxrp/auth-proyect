@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Usuario | AuthProyect</title>
+  <meta name="description" content="Dashboard de usuario con información de perfil, estado de sesión y validación de autenticación.">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Minimalist Background Grid & Ambient -->
+  <div class="bg-ambient"></div>
+  <div class="bg-grid"></div>
+
+  <div class="dashboard-layout">
+    
+    <!-- Top Navigation -->
+    <header class="dash-header">
+      <div class="dash-nav">
+        
+        <a href="user-dashboard.html" class="nav-brand">
+          <div class="nav-brand-icon" style="background: var(--gradient-user);">
+            <span>👤</span>
+          </div>
+          <div class="nav-brand-title">
+            Auth<span class="text-gradient-user">Proyect</span> <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-left: 4px;">USER</span>
+          </div>
+        </a>
+
+        <div class="nav-actions">
+          <div class="user-profile-badge">
+            <div class="user-avatar" style="background: var(--gradient-user);" id="user-avatar-initial">U</div>
+            <div class="user-info-text">
+              <span class="user-email-display user-email-text">usuario@example.com</span>
+              <span class="badge badge-user user-role-text" style="font-size: 0.68rem; padding: 1px 6px;">USER</span>
+            </div>
+          </div>
+
+          <button id="btn-logout" class="btn btn-secondary btn-sm" title="Cerrar sesión segura">
+            <span>🚪</span> Cerrar Sesión
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dash-main">
+      
+      <!-- Welcome Banner -->
+      <section class="glass-panel welcome-banner user-banner">
+        <div class="welcome-text">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <span class="badge badge-user">Usuario Autenticado</span>
+            <span class="badge badge-live"><span class="status-dot"></span> Conexión Segura</span>
+          </div>
+          <h1>¡Hola de nuevo, <span class="text-gradient-user user-email-text">Usuario</span>!</h1>
+          <p>Tu sesión ha sido autenticada exitosamente mediante el servicio de backend con JSON Web Tokens.</p>
+        </div>
+      </section>
+
+      <!-- Stat Cards Grid -->
+      <section class="dash-grid">
+        
+        <div class="col-4">
+          <div class="glass-panel stat-card">
+            <div class="stat-icon emerald">👤</div>
+            <div class="stat-info">
+              <span class="stat-label">Tipo de Cuenta</span>
+              <span class="stat-value user-role-text text-gradient-user">USER</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="glass-panel stat-card">
+            <div class="stat-icon indigo">⏳</div>
+            <div class="stat-info">
+              <span class="stat-label">Sesión Válida Por</span>
+              <span class="stat-value text-mono" id="session-expires-text">Calculando...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="glass-panel stat-card">
+            <div class="stat-icon cyan">🛡️</div>
+            <div class="stat-info">
+              <span class="stat-label">Estado de la Cuenta</span>
+              <span class="stat-value" style="font-size: 1.15rem; color: #34d399;">Activa & Verificada</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Main Columns -->
+      <div class="dash-grid">
+        
+        <!-- Left Column: User Profile & Token Verification -->
+        <div class="col-8">
+          
+          <!-- Profile Details Card -->
+          <div class="glass-panel dash-card" style="margin-bottom: 1.5rem;">
+            <div class="dash-card-header">
+              <div class="dash-card-title">
+                <span>📋</span> Datos de tu Perfil y Sesión
+              </div>
+              <span class="badge badge-user">Datos Activos</span>
+            </div>
+
+            <!-- Session Countdown Bar -->
+            <div class="session-timer-box">
+              <div class="session-timer-header">
+                <span style="color: var(--text-muted);">Tiempo restante de tu sesión JWT</span>
+                <span class="text-mono" style="font-weight: 600; color: #34d399;">Token Activo</span>
+              </div>
+              <div class="session-progress-bar">
+                <div class="session-progress-fill" id="session-progress-fill" style="background: var(--gradient-user);"></div>
+              </div>
+            </div>
+
+            <!-- Properties Grid -->
+            <div class="token-property-grid">
+              <div class="property-box">
+                <span class="label">Correo Electrónico</span>
+                <span class="value text-mono user-email-text">-</span>
+              </div>
+              <div class="property-box">
+                <span class="label">Rol en el Sistema</span>
+                <span class="value text-mono user-role-text" style="color: #34d399;">-</span>
+              </div>
+              <div class="property-box">
+                <span class="label">Hora de Inicio de Sesión</span>
+                <span class="value text-mono" id="jwt-claim-iat">-</span>
+              </div>
+              <div class="property-box">
+                <span class="label">Hora de Expiración</span>
+                <span class="value text-mono" id="jwt-claim-exp">-</span>
+              </div>
+            </div>
+
+            <!-- Copy Token Snippet -->
+            <div style="margin-top: 0.5rem;">
+              <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">
+                Tu Token de Acceso (JWT)
+              </span>
+              <div class="code-block-wrapper">
+                <button type="button" class="copy-btn" id="btn-copy-token">📋 Copiar Token</button>
+                <div class="code-block" id="raw-jwt-token" style="max-height: 100px;">Cargando...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- API Test Card -->
+          <div class="glass-panel dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">
+                <span>⚡</span> Verificación en Servidor: <code>GET /api/usuarios/validar</code>
+              </div>
+              <button id="btn-test-validate" class="btn btn-secondary btn-sm">
+                ⚡ Validar Sesión
+              </button>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.85rem;">
+              Comprueba en tiempo real que tu token de sesión es aceptado por el backend de Spring Boot y revisa las autoridades asignadas.
+            </p>
+
+            <div class="api-tester-response">
+              <div class="api-tester-header">
+                <div>
+                  <span style="color: var(--text-muted); font-size: 0.75rem;">RESPUESTA:</span>
+                  <span id="api-test-status" class="status-tag ok" style="margin-left: 0.5rem;">200 OK</span>
+                </div>
+                <span id="api-test-time" class="text-mono" style="font-size: 0.75rem; color: var(--text-muted);">-- ms</span>
+              </div>
+              <pre class="code-block json" id="api-test-response">{ "cargando": true }</pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Security Checklist -->
+        <div class="col-4">
+          
+          <div class="glass-panel dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">
+                <span>🛡️</span> Medidas de Seguridad
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <div class="check-icon">✓</div>
+              <div>
+                <strong style="font-size: 0.85rem; color: var(--text-primary);">Contraseña Encriptada</strong>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Protegida con hashing irreversible BCrypt.</p>
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <div class="check-icon">✓</div>
+              <div>
+                <strong style="font-size: 0.85rem; color: var(--text-primary);">Sesión Stateless</strong>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Firma criptográfica HMAC-SHA256.</p>
+              </div>
+            </div>
+
+            <div class="checklist-item">
+              <div class="check-icon">✓</div>
+              <div>
+                <strong style="font-size: 0.85rem; color: var(--text-primary);">Notificación de Bienvenida</strong>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Correo enviado vía JavaMailSender.</p>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <button class="btn btn-secondary btn-block btn-sm" onclick="Toast.info('Tus datos y credenciales se encuentran totalmente protegidos.', 'Seguridad Óptima')">
+                Ver Estado de Privacidad
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
